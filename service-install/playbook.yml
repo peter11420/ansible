@@ -1,0 +1,55 @@
+- name: Ningx Install
+  hosts: server
+  gather_facts: no
+  become: yes
+  vars:
+    - tools:
+      - nginx
+      - unzip
+      - curl
+      - software-properties-common
+    - packages:
+      - php7.3-fpm
+      - php7.3-mysql
+      - php7.3-mbstring
+      - php7.3-tokenizer
+      - php7.3-curl
+      - php7.3-redis
+      - php7.3-bcmath
+      - php7.3-gd
+      - php7.3-zip
+      - php7.3-xml
+
+  pre_tasks:
+  - name: Upgrade
+    apt:
+      upgrade: true
+  - name: Install Service
+    apt:
+      pkg: "{{ tools }}"
+      state: latest
+      update_cache: true
+  
+  tasks:
+  # - name: nginx conf
+  #   template:
+  #       src: 'default.conf.j2'
+  #       dest: '/etc/nginx/conf.d/default.conf'
+  #       owner: root
+  #       group: root
+  #       mode: 0644
+
+  - name: Setting nginx Timezone
+    lineinfile:
+      path: /etc/init.d/nginx
+      line: 'export TZ="Asia/Taipei"'
+
+  - name: 'Start Nginx'
+    service:
+      name: nginx
+      state: started
+      enabled: true
+
+  roles:
+  - php
+  - nodejs

@@ -1,0 +1,13 @@
+[server]
+192.168.51.83
+
+[all:vars]
+ansible_user=user
+#ansible_ssh_pass=123456
+ansible_python_interpreter=/usr/bin/python3
+
+[server:vars]
+logstash_ip=192.168.51.73
+logstash_port=5044
+nginx_access_path=/usr/share/filebeat/logs/laravel*
+nginx_error_path=/usr/share/filebeat/logs/nginx-error.log

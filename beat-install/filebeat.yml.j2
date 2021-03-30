@@ -1,0 +1,22 @@
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+filebeat.modules:
+-  module: nginx
+   access:
+     var.paths: ["{{ nginx_acess_path }}"]
+   error:
+     var.paths: ["{{ nginx_error_path }}"]
+- module: apache
+  access:
+    var.paths: ["/usr/share/filebeat/logs/laravel/*"]
+  error:
+    var.paths: ["/usr/share/filebeat/txt/*"]     
+
+processors:
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+
+output.logstash:
+  hosts: ["{{ logstash_ip }}:{{ logstash_port }}"]

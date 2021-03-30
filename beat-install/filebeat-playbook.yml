@@ -1,0 +1,28 @@
+- hosts: server
+  gather_facts: no
+  become: yes
+  tasks:
+    
+  - name: 'Copy Configuration File'
+    template:
+        src: 'filebeat.yml.j2'
+        dest: '/etc/filebeat/filebeat.yml'
+        owner: root
+        group: root
+        mode: 0644
+
+  - name: 'Start filebeat'
+    service:
+      name: filebeat
+      state: started
+      enabled: true
+
+  - name: 'Enalbe Nginx module'
+    shell: "filebeat modules enable nginx"
+
+  - name: 'Enalbe Apache module'
+    shell: "filebeat modules enable apache"
+
+
+  roles:
+  - filebeat

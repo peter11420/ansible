@@ -1,0 +1,5 @@
+- name: Install python
+  apt:
+    pkg: python
+    state: present
+    update_cache: true

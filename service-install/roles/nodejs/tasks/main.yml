@@ -1,0 +1,7 @@
+- name: Install composer
+  shell: "curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer --1"
+- name: Install nodejs
+  apt:
+    pkg: nodejs
+    state: present
+    update_cache: true

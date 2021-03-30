@@ -1,0 +1,14 @@
+[load_balancers]
+192.168.72.21
+
+[web_servers]
+192.168.73.51
+192.168.73.52
+
+[all:vars]
+ansible_user=user
+ansible_python_interpreter=/usr/bin/python3
+
+[load_balancers:vars]
+servername=ag.95gpk.com
+reponame=anun_agent

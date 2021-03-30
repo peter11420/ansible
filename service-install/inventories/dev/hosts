@@ -1,0 +1,17 @@
+[server]
+192.168.51.86
+192.168.51.87
+
+
+
+
+[all:vars]
+ansible_user=user
+ansible_ssh_pass=123456
+ansible_python_interpreter=/usr/bin/python3
+username=drone-wolves
+password=qwqw1212@github
+
+reponame=shopee_data_center
+logname=
+server_name=

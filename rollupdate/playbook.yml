@@ -1,0 +1,36 @@
+- hosts: load_balancers
+  gather_facts: no
+  tasks: []
+
+- hosts: web_servers
+  gather_facts: no
+  become: yes
+  serial: 1
+
+  pre_tasks:
+  - name: '將 {{ inventory_hostname }} 從 load balancers 移除'
+    template: src='nginx/conf.d/default.conf.j2' dest='/etc/nginx/conf.d/{{reponame}}.conf'
+    vars:
+    - drain_host: '{{ inventory_hostname }}'
+    delegate_to: '{{ item }}'
+    loop: '{{ groups.load_balancers }}'
+    notify:
+    - reload nginx
+
+  post_tasks:
+  - name: '將 {{ inventory_hostname }} 加入 load balancers'
+    template: src='nginx/conf.d/default.conf.j2' dest='/etc/nginx/conf.d/{{reponame}}.conf'
+    delegate_to: '{{ item }}'
+    loop: '{{ groups.load_balancers }}'
+    notify:
+    - reload nginx
+
+  roles:
+  - web
+
+  handlers:
+  - name: reload nginx
+    service: name=nginx state=reloaded
+    become: true
+    delegate_to: '{{ item }}'
+    loop: '{{ groups.load_balancers }}'

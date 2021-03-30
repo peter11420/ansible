@@ -1,0 +1,22 @@
+- hosts: server
+  gather_facts: no
+  become: yes
+  tasks:
+    
+  - name: 'Copy Configuration File'
+    template:
+        src: 'metricbeat.yml.j2'
+        dest: '/etc/metricbeat/metricbeat.yml'
+        owner: root
+        group: root
+        mode: 0644
+
+  - name: 'Start metricbeat'
+    service:
+      name: metricbeat
+      state: started
+      enabled: true
+
+  
+  roles:
+  - metricbeat

@@ -1,0 +1,11 @@
+---
+- name: Git clone
+  git:
+    repo: 'https://{{ username | urlencode }}:{{ password | urlencode }}@github.com/woolves/{{ reponame }}.git'
+    dest: /home/user/{{ reponame }}
+  
+- name: Change mode
+  file:
+    path: /home/user/{{ reponame }}
+    owner: user
+    group: user

@@ -1,0 +1,71 @@
+---
+kind: pipeline
+name: clone
+
+workspace:
+  base: /home
+  path: src/github.com/
+
+clone:
+  depth: 0
+  tags: false
+
+steps:
+- name: scp
+  image: appleboy/drone-scp
+  settings:
+    host:
+      - 192.168.51.84
+    username: user
+    password:
+      from_secret: ssh_password
+    port: 22
+    source:
+      - ./*
+    target: /home/user/test
+
+
+
+- name: apply ansible playbook
+  image: plugins/ansible:1
+  environment:
+    ANSIBLE_PRIVATE_KEY:
+      from_secret: devprivatekey  #使用自定義名稱,並加入變數
+  settings:
+    playbook: ansible/playbook.yml
+    inventory: ansible/inventories/dev/hosts
+    private_key:
+      from_secret: $ANSIBLE_PRIVATE_KEY   套用變數
+
+- name: slack
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: slack_webhook    #不使用自定義名稱（要在前面加上服務名稱）
+    channe: drone-test
+    template: >
+      {{#if build.pull }}
+        *{{#success build.status}}:white_check_mark:{{ else }}:x:{{/success}} {{ uppercasefirst build.status }}*: <https://github.com/{{ repo.owner }}/{{ repo.name }}/pull/{{ build.pull }}|Pull Request #{{ build.pull }}>
+      {{else}}
+        *{{#success build.status}}:white_check_mark:{{ else }}:x:{{/success}} {{ uppercasefirst build.status }}: Build `#{{ build.number }}` * (type: `{{ build.event }}`)
+      {{/if}}
+
+      *RepoName:* `{{repo.name}}` - <https://github.com/{{ repo.owner }}/{{ repo.name }}/commits/{{ build.branch }}|{{ build.branch }}>
+
+      *Author:* {{ build.author.name }}
+
+      *Message:* {{build.Message}}
+
+      <{{ build.link }}|Visit build page ↗>
+  when:
+    status: [ success, failure ]  
+
+trigger:
+  branch: 
+  - master
+  event:
+  - push
+  - pull_request
+
+node:
+  wolves: agent1

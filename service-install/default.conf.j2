@@ -1,0 +1,22 @@
+server {
+    listen 80;
+    
+    root /home/user/{{ reponame }}/public;
+    index index.php index.html index.htm;
+    
+    server_name {{ server_name }};
+    
+    access_log /var/log/nginx/{{ logname }}-access.log;
+    error_log /var/log/nginx/{{ logname }}-error.log;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # PHP-FPM Configuration Nginx
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}

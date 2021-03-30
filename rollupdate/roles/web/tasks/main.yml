@@ -1,0 +1,23 @@
+---
+# tasks file for rolling
+
+#- name: 備份目前的專案
+#  debug: msg='備份目前的專案'
+
+#- name: 拉取指定版本
+#  debug: msg='拉取指定版本'
+
+#- name: 注入環境變數
+#  debug: msg='注入環境變數'
+
+#- name: 更新專案
+#  debug: msg='更新專案'
+
+#- name: 清除快取
+#  debug: msg='清除快取'
+- name: 'run bash'
+  command: "bash /home/user/{{reponame}}/templates/build.sh"
+  register: result
+- name: print stdout
+  debug:
+    msg: "{{ result }}"

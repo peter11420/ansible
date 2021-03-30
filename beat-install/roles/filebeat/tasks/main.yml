@@ -1,0 +1,34 @@
+- name: 'Get key'
+  shell: "wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -"
+  register: result
+- name: print stdout
+  debug:
+    msg: "{{ result }}"
+
+- name: 'Install apt-transport-https'
+  shell: "sudo apt-get install apt-transport-https -y"
+  register: result
+- name: print stdout
+  debug:
+    msg: "{{ result }}"
+
+- name: 'Input source'
+  shell: "echo \"deb https://artifacts.elastic.co/packages/7.x/apt stable main\" | sudo tee -a /etc/apt/sources.list.d/elastic-7.x.list"
+  register: result
+- name: print stdout
+  debug:
+    msg: "{{ result }}"
+
+- name: 'Install filebeat'
+  shell: "sudo apt-get update && sudo apt-get install filebeat -y"
+  register: result
+- name: print stdout
+  debug:
+    msg: "{{ result }}"
+
+- name: 'Enable filebeat'
+  shell: "sudo systemctl enable filebeat"
+  register: result
+- name: print stdout
+  debug:
+    msg: "{{ result }}"
